@@ -1,5 +1,9 @@
 # EC2 IMDS Mock
 
+[![Docker Hub](https://img.shields.io/docker/v/sunaoka/ec2-metadata-mock?label=Docker%20Hub&color=%232986FF)](https://hub.docker.com/r/sunaoka/ec2-metadata-mock)
+[![Test](https://github.com/sunaoka/docker-ec2-metadata-mock/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/sunaoka/docker-ec2-metadata-mock/actions/workflows/test.yml)
+[![Codecov](https://codecov.io/gh/sunaoka/docker-ec2-metadata-mock/graph/badge.svg)](https://app.codecov.io/gh/sunaoka/docker-ec2-metadata-mock)
+
 An EC2 Instance Metadata Service (IMDS) mock for local development and testing. It runs as a Docker Compose sidecar that shares an application container's network namespace, allowing AWS SDKs and the AWS CLI to use the standard `http://169.254.169.254` endpoint. Do not use it in production.
 
 ## Usage
