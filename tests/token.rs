@@ -1,6 +1,6 @@
 mod common;
 
-use std::{thread, time::Duration};
+use std::time::Duration;
 
 use axum::{
     body::Body,
@@ -48,7 +48,7 @@ async fn rejects_invalid_token_ttl() {
 async fn rejects_expired_token() {
     let app = test_app(false);
     let token = issue_token(&app, 1).await;
-    thread::sleep(Duration::from_millis(1_100));
+    tokio::time::sleep(Duration::from_millis(1_100)).await;
     let response = app
         .oneshot(
             Request::builder()
