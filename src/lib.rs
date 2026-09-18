@@ -14,7 +14,7 @@ use axum::{
         header::{CONTENT_LENGTH, HeaderName},
     },
     middleware::{self, Next},
-    response::{IntoResponse, Response},
+    response::Response,
     routing::{get, put},
 };
 use chrono::{DateTime, Duration as ChronoDuration, SecondsFormat, Utc};
@@ -231,10 +231,4 @@ impl Credentials {
 
 fn imds_timestamp(timestamp: DateTime<Utc>) -> String {
     timestamp.to_rfc3339_opts(SecondsFormat::Secs, true)
-}
-
-impl IntoResponse for Credentials {
-    fn into_response(self) -> axum::response::Response {
-        Json(self).into_response()
-    }
 }

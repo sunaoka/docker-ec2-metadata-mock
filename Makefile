@@ -17,7 +17,7 @@ format:  ## Format the code
 	cargo fmt --all -v
 
 lint:  ## Lint the code
-	cargo clippy
+	cargo clippy --all-targets --all-features --locked -- -D warnings
 
 build:  ## Build the Docker image
 	(docker buildx ls | grep $(BUILDER)) || docker buildx create --name $(BUILDER)

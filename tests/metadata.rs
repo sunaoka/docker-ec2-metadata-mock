@@ -5,7 +5,9 @@ use axum::{
     http::{Request, StatusCode},
 };
 use chrono::DateTime;
+use ec2_metadata_mock::{AppState, Config, app};
 use serde_json::Value;
+use std::time::Duration;
 use tower::ServiceExt;
 
 use common::{issue_token, test_app, test_app_with_debug};
@@ -87,6 +89,35 @@ async fn debug_logging_preserves_credential_response() {
     assert_eq!(response.status(), StatusCode::OK);
     let body = String::from_utf8(to_bytes(response.into_body(), usize::MAX).await.unwrap().to_vec()).unwrap();
     assert!(body.contains("test-secret"));
+}
+
+#[tokio::test]
+async fn debug_logging_omits_large_credential_responses_without_changing_them() {
+    let app = app(AppState::new(Config {
+        role_name: "local-role".to_owned(),
+        access_key_id: "test-key".to_owned(),
+        secret_access_key: "x".repeat(65_537),
+        session_token: "test-token".to_owned(),
+        credential_ttl: Duration::from_secs(60),
+        imds_v1_enabled: false,
+        imds_ipv6_enabled: false,
+        listen_port: 8181,
+        debug: true,
+    }));
+    let token = issue_token(&app, 60).await;
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri("/latest/meta-data/iam/security-credentials/local-role")
+                .header("x-aws-ec2-metadata-token", token)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+    assert!(to_bytes(response.into_body(), usize::MAX).await.unwrap().len() > 65_536);
 }
 
 #[tokio::test]

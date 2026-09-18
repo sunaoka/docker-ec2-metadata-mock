@@ -83,3 +83,13 @@ fn parses_flag_configuration() {
     assert_flag_configuration("IMDS_IPV6_ENABLED", |config| config.imds_ipv6_enabled);
     assert_flag_configuration("DEBUG", |config| config.debug);
 }
+
+#[test]
+fn rejects_zero_credential_ttl() {
+    let _lock = ENV_LOCK.lock().unwrap();
+    let env_guard = EnvGuard::new("IMDS_CREDENTIAL_TTL_SECONDS");
+
+    env_guard.set("0");
+
+    assert_eq!(Config::from_env().unwrap_err(), "IMDS_CREDENTIAL_TTL_SECONDS must be greater than zero");
+}

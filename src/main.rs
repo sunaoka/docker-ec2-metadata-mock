@@ -28,8 +28,19 @@ async fn main() {
 
         info!(address = %ipv6_address, "server started");
 
-        tokio::try_join!(axum::serve(ipv4_listener, app(state.clone())), axum::serve(ipv6_listener, app(state))).expect("serve IMDS");
+        tokio::try_join!(
+            axum::serve(ipv4_listener, app(state.clone())).with_graceful_shutdown(shutdown_signal()),
+            axum::serve(ipv6_listener, app(state)).with_graceful_shutdown(shutdown_signal())
+        )
+        .expect("serve IMDS");
     } else {
-        axum::serve(ipv4_listener, app(state)).await.expect("serve IMDS");
+        axum::serve(ipv4_listener, app(state))
+            .with_graceful_shutdown(shutdown_signal())
+            .await
+            .expect("serve IMDS");
     }
+}
+
+async fn shutdown_signal() {
+    tokio::signal::ctrl_c().await.expect("listen for shutdown signal");
 }
