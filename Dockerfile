@@ -31,6 +31,16 @@ EOF
 COPY --link --from=build /build/target/release/ec2-metadata-mock /usr/local/bin/ec2-metadata-mock
 COPY --link --chmod=755 docker-entrypoint.sh /docker-entrypoint.sh
 
-HEALTHCHECK --interval=5s --timeout=2s --retries=12 CMD curl --fail --silent http://169.254.169.254/health && { [ "${IMDS_IPV6_ENABLED:-0}" != "1" ] || curl --fail --silent 'http://[fd00:ec2::254]/health'; }
+HEALTHCHECK \
+  --interval=5s \
+  --timeout=2s \
+  --retries=12 \
+  CMD [ \
+    "/bin/sh", "-c", \
+    "curl --fail --silent http://169.254.169.254/health && \
+      if [ \"${IMDS_IPV6_ENABLED:-0}\" = 1 ]; then \
+        curl --fail --silent 'http://[fd00:ec2::254]/health'; \
+      fi" \
+  ]
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
