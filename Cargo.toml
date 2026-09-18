@@ -1,6 +1,6 @@
 [package]
 name = "ec2-metadata-mock"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 license = "MIT"
 description = "Local-only EC2 IMDS mock for Docker Compose development"
