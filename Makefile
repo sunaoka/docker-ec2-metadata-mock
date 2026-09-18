@@ -18,6 +18,7 @@ format:  ## Format the code
 
 lint:  ## Lint the code
 	cargo clippy --all-targets --all-features --locked -- -D warnings
+	hadolint Dockerfile --ignore DL3018
 
 build:  ## Build the Docker image
 	(docker buildx ls | grep $(BUILDER)) || docker buildx create --name $(BUILDER)
