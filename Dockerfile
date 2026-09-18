@@ -19,8 +19,6 @@ EXPOSE 80
 ENV IMDS_LISTEN_PORT=8181
 
 RUN <<'EOF'
-  set -eu
-
   apk add --no-cache \
     ca-certificates \
     curl \
