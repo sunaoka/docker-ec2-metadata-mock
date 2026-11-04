@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # check=error=true
-FROM rust:1.98.1-alpine3.24 AS build
+FROM rust:1.99.1-alpine3.24 AS build
 
 WORKDIR /build
 
